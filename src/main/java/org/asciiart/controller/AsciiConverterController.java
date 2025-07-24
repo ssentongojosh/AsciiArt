@@ -13,7 +13,7 @@ public class AsciiConverterController {
         this.asciiService = asciiService;
     }
 
-    public void convertAndOutput(String imagePath, String analyzerType, int targetWidth,double aspectRatioFactor, String outputPath) throws Exception {
+    public char[][] convertAndOutput(String imagePath, String analyzerType, int targetWidth, double aspectRatioFactor, String outputPath) throws Exception {
         char[][] asciiArt = asciiService.convertToAscii(imagePath, analyzerType, targetWidth, aspectRatioFactor);
         if (outputPath == null || outputPath.isEmpty()) {
             // Console output
@@ -31,5 +31,6 @@ public class AsciiConverterController {
                 throw new Exception("Failed to write ASCII art to file: " + outputPath, e);
             }
         }
+        return asciiArt;
     }
 }
