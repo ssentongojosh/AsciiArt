@@ -5,7 +5,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.asciiart.adapter.DefaultImageAdapter;
@@ -46,7 +46,7 @@ public class AsciiConverterView extends Application {
 
             // Create JavaFX UI
             TextArea textArea = new TextArea();
-            textArea.setFont(javafx.scene.text.Font.font("Consolas", 8));
+            textArea.setFont(javafx.scene.text.Font.font("Consolas", 3.2));
             textArea.setEditable(false);
             textArea.setWrapText(false);
 
@@ -57,37 +57,36 @@ public class AsciiConverterView extends Application {
             }
             textArea.setText(sb.toString());
 
-            // Configure TextArea to expand properly
-            textArea.setPrefRowCount(50);
-            textArea.setPrefColumnCount(200);
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-
-            // Add ScrollPane for large outputs
+            // Get screen bounds first
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            // Configure ScrollPane without size constraints initially
             ScrollPane scrollPane = new ScrollPane(textArea);
             scrollPane.setFitToWidth(true);
             scrollPane.setFitToHeight(true);
-            scrollPane.setMaxWidth(Double.MAX_VALUE);
-            scrollPane.setMaxHeight(Double.MAX_VALUE);
 
-            // Set up layout with proper expansion
-            VBox root = new VBox(scrollPane);
-            root.setFillWidth(true);
-            root.setMaxWidth(Double.MAX_VALUE);
-            root.setMaxHeight(Double.MAX_VALUE);
-            VBox.setVgrow(scrollPane, javafx.scene.layout.Priority.ALWAYS);
+            // Use BorderPane instead of VBox for better layout control
+            BorderPane root = new BorderPane();
+            root.setCenter(scrollPane);
             
-            // Get screen bounds for full screen size
-            javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+            // Create scene with screen dimensions
             Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+            
+            // Bind the TextArea size to the scene size
+            textArea.prefWidthProperty().bind(scene.widthProperty());
+            textArea.prefHeightProperty().bind(scene.heightProperty());
             primaryStage.setTitle("ASCII Art Converter");
             primaryStage.setScene(scene);
             primaryStage.setResizable(true);
-            primaryStage.setMinWidth(400); // Minimum width to ensure usability
-            primaryStage.setMinHeight(300); // Minimum height to ensure usability
             
-            // Add full screen support
-            primaryStage.setMaximized(true); // Start maximized
+            // Set stage to use full screen dimensions
+            primaryStage.setX(screenBounds.getMinX());
+            primaryStage.setY(screenBounds.getMinY());
+            primaryStage.setWidth(screenBounds.getWidth());
+            primaryStage.setHeight(screenBounds.getHeight());
+            
+            // Alternative: Force maximized state
+            primaryStage.setMaximized(true);
             
             // Add keyboard shortcut for toggling full screen (F11)
             scene.setOnKeyPressed(event -> {
