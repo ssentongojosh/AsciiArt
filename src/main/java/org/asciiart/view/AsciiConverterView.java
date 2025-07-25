@@ -46,7 +46,7 @@ public class AsciiConverterView extends Application {
 
             // Create JavaFX UI
             TextArea textArea = new TextArea();
-            textArea.setFont(javafx.scene.text.Font.font("Consolas", 3.2));
+            textArea.setFont(javafx.scene.text.Font.font("Consolas", 5));
             textArea.setEditable(false);
             textArea.setWrapText(false);
 
